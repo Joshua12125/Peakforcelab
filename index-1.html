@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PeakForce Labs — Premium Research Compounds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0C0F14;
+      --surface: #111620;
+      --card:    #161C28;
+      --border:  #1E2738;
+      --blue:    #1B4F8A;
+      --blue2:   #2260A8;
+      --accent:  #4A90D9;
+      --white:   #FFFFFF;
+      --muted:   #6B7A94;
+      --light:   #C8D4E8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ── TOP BAR ──────────────────────────────────────── */
+    .topbar {
+      background: var(--blue);
+      text-align: center;
+      padding: 10px 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    /* ── NAV ──────────────────────────────────────────── */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 6vw;
+      border-bottom: 1px solid var(--border);
+      background: var(--black);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo img {
+      height: 56px;
+      width: auto;
+      display: block;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--blue2); }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: calc(100vh - 93px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+      padding: 80px 6vw;
+    }
+
+    .hero-bg-lines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -62deg,
+        transparent, transparent 90px,
+        rgba(27,79,138,0.04) 90px,
+        rgba(27,79,138,0.04) 91px
+      );
+      pointer-events: none;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -250px; right: -250px;
+      width: 800px; height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(27,79,138,0.22) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 36px; height: 2px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .hero-headline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(68px, 11vw, 148px);
+      line-height: 0.91;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-headline em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-headline .outline {
+      -webkit-text-stroke: 2px rgba(74,144,217,0.35);
+      color: transparent;
+    }
+
+    .hero-sub {
+      font-size: clamp(15px, 1.7vw, 17px);
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.7;
+      margin-top: 36px;
+      margin-bottom: 48px;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--blue);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 18px 42px;
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 14px 100%);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--blue2); transform: translateY(-2px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--light);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 18px 0;
+      border-bottom: 2px solid var(--border);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-badges {
+      display: flex;
+      gap: 36px;
+      margin-top: 64px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ── TICKER ───────────────────────────────────────── */
+    .ticker-wrap {
+      background: var(--blue);
+      padding: 13px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker-track {
+      display: inline-flex;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker-track span {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--white);
+      padding: 0 52px;
+    }
+    .ticker-track span::after {
+      content: '✦';
+      margin-left: 52px;
+      opacity: 0.4;
+    }
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── STATS ────────────────────────────────────────── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-item {
+      padding: 52px 40px;
+      border-right: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: var(--surface); }
+
+    .stat-number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(44px, 5vw, 66px);
+      line-height: 1;
+    }
+    .stat-number span { color: var(--accent); }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* ── SECTION BASE ─────────────────────────────────── */
+    .section { padding: 100px 6vw; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(38px, 6vw, 70px);
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    /* ── CATEGORY CARDS ───────────────────────────────── */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .cat-card {
+      background: var(--card);
+      padding: 44px 38px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: background 0.25s;
+      display: flex;
+      flex-direction: column;
+    }
+    .cat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--blue);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .cat-card:hover::after { transform: scaleX(1); }
+    .cat-card:hover { background: #1A2235; }
+
+    .cat-icon {
+      width: 48px; height: 48px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 24px;
+      color: var(--accent);
+    }
+    .cat-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .cat-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .cat-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 30px;
+    }
+    .cat-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cat-coa {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cat-arrow {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .cat-card:hover .cat-arrow { background: var(--blue); border-color: var(--blue); }
+
+    .view-all-wrap { text-align: center; margin-top: 48px; }
+
+    /* ── WHY ──────────────────────────────────────────── */
+    .why { background: var(--surface); padding: 100px 6vw; }
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .why-big-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(90px, 13vw, 170px);
+      line-height: 1;
+      text-transform: uppercase;
+      -webkit-text-stroke: 1px rgba(27,79,138,0.3);
+      color: transparent;
+      letter-spacing: -0.02em;
+      user-select: none;
+    }
+    .why-cert-box {
+      position: absolute;
+      bottom: -16px; right: 0;
+      background: var(--blue);
+      padding: 22px 28px;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 10px 100%);
+    }
+    .why-cert-box strong {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 21px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .why-cert-box span { font-size: 12px; opacity: 0.82; letter-spacing: 0.05em; }
+
+    .why-visual { position: relative; }
+    .why-features { display: flex; flex-direction: column; gap: 30px; }
+    .why-feature {
+      display: flex;
+      gap: 22px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+    }
+    .why-feature:last-child { border-bottom: none; padding-bottom: 0; }
+    .why-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 38px;
+      color: var(--accent);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 44px;
+    }
+    .why-feature-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 21px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    .why-feature-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+    /* ── PROCESS ──────────────────────────────────────── */
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .step { background: var(--card); padding: 40px 32px; position: relative; overflow: hidden; }
+    .step-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 88px;
+      color: rgba(27,79,138,0.1);
+      line-height: 1;
+      position: absolute;
+      top: 8px; right: 12px;
+    }
+    .step-icon { font-size: 26px; margin-bottom: 20px; }
+    .step-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
+    }
+    .step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+    /* ── CTA BANNER ───────────────────────────────────── */
+    .cta-banner {
+      background: var(--blue);
+      padding: 80px 6vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: 'PEAK';
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 240px;
+      color: rgba(255,255,255,0.05);
+      position: absolute;
+      right: -30px;
+      top: 50%;
+      transform: translateY(-50%);
+      line-height: 1;
+      pointer-events: none;
+      letter-spacing: -0.02em;
+    }
+    .cta-banner-text h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(34px, 5vw, 58px);
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+    .cta-banner-text p { font-size: 15px; opacity: 0.82; margin-top: 10px; }
+
+    .btn-white {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      color: var(--blue);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 18px 42px;
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 14px 100%);
+      transition: opacity 0.2s, transform 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-white:hover { opacity: 0.92; transform: translateY(-2px); }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      background: var(--black);
+      padding: 56px 6vw 40px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-logo img { height: 48px; width: auto; }
+    .footer-links { display: flex; gap: 32px; flex-wrap: wrap; }
+    .footer-links a {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+      transition: color 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .footer-links a:hover { color: var(--white); }
+    .footer-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-legal { font-size: 11.5px; color: var(--muted); line-height: 1.6; max-width: 600px; }
+    .footer-legal strong { color: var(--light); }
+    .footer-copy { font-size: 11.5px; color: #2A3448; white-space: nowrap; }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 960px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat-item { border-bottom: 1px solid var(--border); }
+      .categories-grid { grid-template-columns: 1fr 1fr; }
+      .why-grid { grid-template-columns: 1fr; gap: 40px; }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .hero { padding: 60px 5vw 48px; min-height: 90vh; }
+      .hero-badges { gap: 20px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .categories-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr; }
+      .section { padding: 72px 5vw; }
+      .why { padding: 72px 5vw; }
+      .why-big-text { font-size: 90px; }
+      .footer-links { gap: 18px; }
+      .nav { padding: 16px 5vw; }
+    }
+    @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">Free Shipping on Orders Over $200 &nbsp;·&nbsp; For Research Use Only</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="https://peakforcelabs.com" target="_blank" class="nav-logo">
+    <img src="data:image/webp;base64,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" alt="PeakForce Labs" />
+  </a>
+  <a href="https://peakforcelabs.com/shop" target="_blank" class="nav-cta">Browse Catalog →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-lines"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Premium Research Compounds</div>
+  <h1 class="hero-headline">
+    <div>Push Every</div>
+    <div><em>Limit.</em></div>
+    <div class="outline">Peak Force.</div>
+  </h1>
+  <p class="hero-sub">
+    99%+ purity. Six independent tests. Certificate of Analysis on every batch.
+    The standard for serious RUO researchers who refuse to compromise.
+  </p>
+  <div class="hero-cta-row">
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="btn-primary">Browse Catalog &nbsp;→</a>
+    <a href="https://peakforcelabs.com/coas" target="_blank" class="btn-ghost">View COAs</a>
+  </div>
+  <div class="hero-badges">
+    <div class="badge"><div class="badge-dot"></div>COA Certified</div>
+    <div class="badge"><div class="badge-dot"></div>6-Point Independent Testing</div>
+    <div class="badge"><div class="badge-dot"></div>Free Shipping $200+</div>
+    <div class="badge"><div class="badge-dot"></div>US Lab Verified</div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <span>99%+ Purity Guaranteed</span><span>COA on Every Batch</span>
+    <span>6-Point Independent Testing</span><span>Free Shipping Over $200</span>
+    <span>Research Use Only</span><span>PeakForce Labs</span>
+    <span>Same-Day Dispatch</span><span>US Lab Verified</span>
+    <span>99%+ Purity Guaranteed</span><span>COA on Every Batch</span>
+    <span>6-Point Independent Testing</span><span>Free Shipping Over $200</span>
+    <span>Research Use Only</span><span>PeakForce Labs</span>
+    <span>Same-Day Dispatch</span><span>US Lab Verified</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item">
+    <div class="stat-number">99<span>%+</span></div>
+    <div class="stat-label">Verified Purity</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number"><span>6×</span></div>
+    <div class="stat-label">Independent Tests Per Batch</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">100<span>%</span></div>
+    <div class="stat-label">COA-Certified Products</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number"><span>24</span>h</div>
+    <div class="stat-label">Same-Day Dispatch</div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="section" style="background: var(--black);">
+  <div class="section-header">
+    <div>
+      <div class="section-label">What We Offer</div>
+      <h2 class="section-title">Research-Grade<br>Compounds</h2>
+    </div>
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="btn-ghost">Full Catalog →</a>
+  </div>
+  <div class="categories-grid">
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="cat-card">
+      <div class="cat-icon">⚗️</div>
+      <div class="cat-tag">Category</div>
+      <div class="cat-name">Growth Hormone<br>Peptides</div>
+      <p class="cat-desc">Research compounds studied for their interactions with growth hormone pathways. Independently tested to 99%+ purity with full COA documentation.</p>
+      <div class="cat-footer"><div class="cat-coa">COA Available</div><div class="cat-arrow">→</div></div>
+    </a>
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="cat-card">
+      <div class="cat-icon">🔬</div>
+      <div class="cat-tag">Category</div>
+      <div class="cat-name">Tissue & Recovery<br>Compounds</div>
+      <p class="cat-desc">Synthesized research reagents widely studied for cytoprotective and regenerative properties in controlled laboratory environments.</p>
+      <div class="cat-footer"><div class="cat-coa">COA Available</div><div class="cat-arrow">→</div></div>
+    </a>
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="cat-card">
+      <div class="cat-icon">🧬</div>
+      <div class="cat-tag">Category</div>
+      <div class="cat-name">Metabolic Research<br>Compounds</div>
+      <p class="cat-desc">High-purity reagents for metabolic pathway research. Synthesized under controlled conditions and verified through six independent assays.</p>
+      <div class="cat-footer"><div class="cat-coa">COA Available</div><div class="cat-arrow">→</div></div>
+    </a>
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="cat-card">
+      <div class="cat-icon">🧪</div>
+      <div class="cat-tag">Category</div>
+      <div class="cat-name">Melanocortin<br>Research</div>
+      <p class="cat-desc">Synthetic analogs studied for melanocortin receptor activity. Every vial assayed for identity, purity, and concentration before release.</p>
+      <div class="cat-footer"><div class="cat-coa">COA Available</div><div class="cat-arrow">→</div></div>
+    </a>
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="cat-card">
+      <div class="cat-icon">🧠</div>
+      <div class="cat-tag">Category</div>
+      <div class="cat-name">Neuropeptide<br>Research</div>
+      <p class="cat-desc">Research compounds for CNS and neuroprotective studies. Documented to the same six-point standard as every compound in our catalog.</p>
+      <div class="cat-footer"><div class="cat-coa">COA Available</div><div class="cat-arrow">→</div></div>
+    </a>
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="cat-card">
+      <div class="cat-icon">💊</div>
+      <div class="cat-tag">Category</div>
+      <div class="cat-name">Reconstitution<br>Solutions</div>
+      <p class="cat-desc">Sterile diluents and reconstitution solutions for research use. Verified to meet the same quality standards as our peptide compounds.</p>
+      <div class="cat-footer"><div class="cat-coa">COA Available</div><div class="cat-arrow">→</div></div>
+    </a>
+  </div>
+  <div class="view-all-wrap">
+    <a href="https://peakforcelabs.com/shop" target="_blank" class="btn-primary">View Full Catalog →</a>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why">
+  <div class="why-grid">
+    <div class="why-visual">
+      <div class="why-big-text">PURE<br>DATA</div>
+      <div class="why-cert-box">
+        <strong>COA Certified</strong>
+        <span>Every batch. Every time.</span>
+      </div>
+    </div>
+    <div>
+      <div class="section-label">Why PeakForce Labs</div>
+      <h2 class="section-title" style="margin-bottom: 48px;">Uncompromising<br>Standards</h2>
+      <div class="why-features">
+        <div class="why-feature">
+          <div class="why-num">01</div>
+          <div>
+            <div class="why-feature-title">Six-Point Independent Testing</div>
+            <p class="why-feature-desc">Every compound runs through six independent assays — identity, purity, net content, endotoxins, sterility, and heavy metals — before it ships. No shortcuts.</p>
+          </div>
+        </div>
+        <div class="why-feature">
+          <div class="why-num">02</div>
+          <div>
+            <div class="why-feature-title">Full COA Transparency</div>
+            <p class="why-feature-desc">Certificates of analysis are publicly available for every batch. You see exactly what you're working with, down to the decimal.</p>
+          </div>
+        </div>
+        <div class="why-feature">
+          <div class="why-num">03</div>
+          <div>
+            <div class="why-feature-title">Research-First, Always</div>
+            <p class="why-feature-desc">Built by researchers, for researchers. Our catalog is designed around what serious RUO labs actually need — not what moves fastest off a shelf.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 48px;">
+        <a href="https://peakforcelabs.com/about" target="_blank" class="btn-primary">About PeakForce Labs →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section" style="background: var(--surface);">
+  <div class="section-header">
+    <div>
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">From Lab<br>To You</h2>
+    </div>
+  </div>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon">🧪</div>
+      <div class="step-title">Synthesis</div>
+      <p class="step-desc">Compounds are synthesized under strict GMP-aligned conditions with documented controls at every stage of the process.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon">📊</div>
+      <div class="step-title">6-Point Testing</div>
+      <p class="step-desc">Six independent assays verify identity, purity, and concentration. No batch ships without passing every single test.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon">📋</div>
+      <div class="step-title">COA Issued</div>
+      <p class="step-desc">A full Certificate of Analysis is generated and published — available to download directly from peakforcelabs.com.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-icon">📦</div>
+      <div class="step-title">Secure Shipping</div>
+      <p class="step-desc">Packed with temperature-appropriate materials and dispatched same day for orders placed before 2PM ET. Free over $200.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-banner-text">
+    <h2>Ready to Elevate<br>Your Research?</h2>
+    <p>Browse the full catalog at peakforcelabs.com</p>
+  </div>
+  <a href="https://peakforcelabs.com/shop" target="_blank" class="btn-white">Enter the Lab →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-logo">
+      <a href="https://peakforcelabs.com" target="_blank">
+        <img src="data:image/webp;base64,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" alt="PeakForce Labs" />
+      </a>
+    </div>
+    <nav class="footer-links">
+      <a href="https://peakforcelabs.com/shop" target="_blank">Products</a>
+      <a href="https://peakforcelabs.com/coas" target="_blank">COAs</a>
+      <a href="https://peakforcelabs.com/about" target="_blank">About</a>
+      <a href="https://peakforcelabs.com/research-blogs" target="_blank">Research Blog</a>
+      <a href="https://peakforcelabs.com/faq" target="_blank">FAQ</a>
+      <a href="https://peakforcelabs.com/contact-us" target="_blank">Contact</a>
+      <a href="https://peakforcelabs.com/refund_returns" target="_blank">Shipping & Returns</a>
+    </nav>
+  </div>
+  <hr class="footer-divider" />
+  <div class="footer-bottom">
+    <p class="footer-legal">
+      <strong>For Research Use Only.</strong> All products sold by PeakForce Labs are intended strictly for laboratory research purposes and are not for human consumption, medical, therapeutic, or diagnostic use. Not evaluated by the FDA.
+    </p>
+    <div class="footer-copy">© 2026 PeakForce Labs. All rights reserved.</div>
+  </div>
+</footer>
+
+</body>
+</html>
