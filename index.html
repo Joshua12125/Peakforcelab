@@ -1888,29 +1888,74 @@
 
   window.addEventListener('DOMContentLoaded', function () {
 
+    // ── SERVER-SIDE EVENTS API HELPER ─────────────────────────────────────────
+    // Sends events to TikTok Events API (server-side) for cross-site tracking
+    function sendTikTokServerEvent(eventName, eventParams) {
+      var payload = {
+        pixel_code: 'D8OPH3RC77U794JNAHKG',
+        event: eventName,
+        event_time: Math.floor(Date.now() / 1000),
+        url: window.location.href,
+        user_agent: navigator.userAgent,
+        properties: eventParams || {}
+      };
+      // Fire-and-forget to TikTok Events API via fetch
+      fetch('https://business-api.tiktok.com/open_api/v1.3/event/track/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Token': '18a2691c457affd37b752cfea37d693a985a5846'
+        },
+        body: JSON.stringify({
+          pixel_code: 'D8OPH3RC77U794JNAHKG',
+          event: eventName,
+          event_time: Math.floor(Date.now() / 1000),
+          context: {
+            page: { url: window.location.href },
+            user: { user_agent: navigator.userAgent }
+          },
+          properties: eventParams || {}
+        }),
+        keepalive: true
+      }).catch(function() {}); // silent fail — tracking should never break UX
+    }
+
     // 1. ALL LINK & BUTTON CLICKS (covers every CTA, nav link, footer link)
     document.querySelectorAll('a, button').forEach(function (el) {
-      el.addEventListener('click', function () {
+      el.addEventListener('click', function (e) {
         if (typeof ttq === 'undefined') return;
         const label = el.innerText.trim() || el.getAttribute('aria-label') || el.getAttribute('href') || 'Unknown';
         const href = el.getAttribute('href') || '';
-        // Contact / Submit buttons → InitiateCheckout
+        const isExternal = href.startsWith('http') || href.startsWith('https');
+        const isOutboundToSite = href.includes('peakforcelabs.com');
+
+        // Contact / Submit buttons → InitiateCheckout + Lead + server-side
         if (el.closest('.contact-form') || label.toLowerCase().includes('submit') || label.toLowerCase().includes('contact')) {
           ttq.track('InitiateCheckout', { content_name: label, content_type: 'contact' });
+          ttq.track('Lead', { content_name: label, content_type: 'contact_form' });
+          sendTikTokServerEvent('Lead', { content_name: label, content_type: 'contact_form', url: window.location.href });
         }
-        // COA / Library buttons → ViewContent
+        // COA / Library buttons → ViewContent + server-side
         else if (label.toLowerCase().includes('coa') || label.toLowerCase().includes('library')) {
           ttq.track('ViewContent', { content_name: label, content_type: 'coa' });
+          sendTikTokServerEvent('ViewContent', { content_name: label, content_type: 'coa', url: href });
         }
-        // All other external links → ClickButton
-        else if (href.startsWith('http') || href.startsWith('https')) {
+        // ALL outbound clicks to peakforcelabs.com → ClickButton + server-side
+        else if (isOutboundToSite) {
+          ttq.track('ClickButton', { content_name: label, content_type: 'outbound_to_site' });
+          ttq.track('ViewContent', { content_name: 'Clicked Through: ' + label, content_type: 'site_referral' });
+          sendTikTokServerEvent('ClickButton', { content_name: label, content_type: 'outbound_to_site', url: href });
+        }
+        // Other external links → ClickButton
+        else if (isExternal) {
           ttq.track('ClickButton', { content_name: label, content_type: 'external_link' });
+          sendTikTokServerEvent('ClickButton', { content_name: label, content_type: 'external_link', url: href });
         }
-        // Internal nav links
+        // Internal nav links (#anchor)
         else if (href.startsWith('#')) {
           ttq.track('ViewContent', { content_name: 'Nav: ' + label, content_type: 'navigation' });
         }
-        // Generic button/link
+        // Generic
         else {
           ttq.track('ClickButton', { content_name: label, content_type: 'button' });
         }
