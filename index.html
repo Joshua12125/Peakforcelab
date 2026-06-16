@@ -1868,12 +1868,138 @@
     const isOpen = item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
     if (!isOpen) item.classList.add('open');
+    // TikTok: FAQ open/close
+    if (typeof ttq !== 'undefined') {
+      const label = el.querySelector('span') ? el.querySelector('span').innerText.trim() : 'FAQ Item';
+      ttq.track('ViewContent', { content_name: 'FAQ: ' + label, content_type: 'faq' });
+    }
   }
 
   function setActive(el) {
     document.querySelectorAll('.std-nav-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
+    // TikTok: Standards nav tab click
+    if (typeof ttq !== 'undefined') {
+      ttq.track('ViewContent', { content_name: 'Standards Tab: ' + el.innerText.trim(), content_type: 'tab' });
+    }
   }
+
+  // ── TIKTOK: COMPREHENSIVE ACTION TRACKING ─────────────────────────────────
+
+  window.addEventListener('DOMContentLoaded', function () {
+
+    // 1. ALL LINK & BUTTON CLICKS (covers every CTA, nav link, footer link)
+    document.querySelectorAll('a, button').forEach(function (el) {
+      el.addEventListener('click', function () {
+        if (typeof ttq === 'undefined') return;
+        const label = el.innerText.trim() || el.getAttribute('aria-label') || el.getAttribute('href') || 'Unknown';
+        const href = el.getAttribute('href') || '';
+        // Contact / Submit buttons → InitiateCheckout
+        if (el.closest('.contact-form') || label.toLowerCase().includes('submit') || label.toLowerCase().includes('contact')) {
+          ttq.track('InitiateCheckout', { content_name: label, content_type: 'contact' });
+        }
+        // COA / Library buttons → ViewContent
+        else if (label.toLowerCase().includes('coa') || label.toLowerCase().includes('library')) {
+          ttq.track('ViewContent', { content_name: label, content_type: 'coa' });
+        }
+        // All other external links → ClickButton
+        else if (href.startsWith('http') || href.startsWith('https')) {
+          ttq.track('ClickButton', { content_name: label, content_type: 'external_link' });
+        }
+        // Internal nav links
+        else if (href.startsWith('#')) {
+          ttq.track('ViewContent', { content_name: 'Nav: ' + label, content_type: 'navigation' });
+        }
+        // Generic button/link
+        else {
+          ttq.track('ClickButton', { content_name: label, content_type: 'button' });
+        }
+      });
+    });
+
+    // 2. FORM FIELD INTERACTIONS (name, email, select, textarea)
+    document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(function (field) {
+      var tracked = false;
+      field.addEventListener('focus', function () {
+        if (!tracked && typeof ttq !== 'undefined') {
+          tracked = true;
+          const label = field.closest('.form-field') && field.closest('.form-field').querySelector('.form-label')
+            ? field.closest('.form-field').querySelector('.form-label').innerText.trim()
+            : field.getAttribute('placeholder') || 'Form Field';
+          ttq.track('ViewContent', { content_name: 'Form Focus: ' + label, content_type: 'form_interaction' });
+        }
+      });
+    });
+
+    // 3. SCROLL DEPTH TRACKING (25%, 50%, 75%, 90%)
+    var scrollDepths = [25, 50, 75, 90];
+    var reached = {};
+    window.addEventListener('scroll', function () {
+      var scrollPct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+      scrollDepths.forEach(function (depth) {
+        if (!reached[depth] && scrollPct >= depth) {
+          reached[depth] = true;
+          if (typeof ttq !== 'undefined') {
+            ttq.track('ViewContent', { content_name: 'Scroll Depth: ' + depth + '%', content_type: 'scroll' });
+          }
+        }
+      });
+    });
+
+    // 4. TIME ON PAGE (30s, 60s, 120s, 180s)
+    [30, 60, 120, 180].forEach(function (seconds) {
+      setTimeout(function () {
+        if (typeof ttq !== 'undefined') {
+          ttq.track('ViewContent', { content_name: 'Time on Page: ' + seconds + 's', content_type: 'engagement' });
+        }
+      }, seconds * 1000);
+    });
+
+    // 5. SECTION VISIBILITY (fires when each section enters viewport)
+    if ('IntersectionObserver' in window) {
+      var sectionObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && typeof ttq !== 'undefined') {
+            var sectionId = entry.target.id || entry.target.className.split(' ')[0];
+            ttq.track('ViewContent', { content_name: 'Section Viewed: ' + sectionId, content_type: 'section' });
+            sectionObserver.unobserve(entry.target); // fire once per section
+          }
+        });
+      }, { threshold: 0.3 });
+      document.querySelectorAll('section[id], .pipeline-section, .trust-bar').forEach(function (el) {
+        sectionObserver.observe(el);
+      });
+    }
+
+    // 6. PIPELINE NODE HOVER (engagement signal)
+    document.querySelectorAll('.p-node').forEach(function (node) {
+      var tracked = false;
+      node.addEventListener('mouseenter', function () {
+        if (!tracked && typeof ttq !== 'undefined') {
+          tracked = true;
+          var label = node.querySelector('.p-node-label') ? node.querySelector('.p-node-label').innerText.trim() : 'Pipeline Node';
+          ttq.track('ViewContent', { content_name: 'Pipeline Hover: ' + label, content_type: 'pipeline' });
+        }
+      });
+    });
+
+    // 7. COPY/HIGHLIGHT TEXT (research intent signal)
+    document.addEventListener('copy', function () {
+      if (typeof ttq !== 'undefined') {
+        ttq.track('ViewContent', { content_name: 'Text Copied', content_type: 'copy' });
+      }
+    });
+
+    // 8. EXIT INTENT (mouse leaves top of page)
+    var exitTracked = false;
+    document.addEventListener('mouseleave', function (e) {
+      if (!exitTracked && e.clientY <= 0 && typeof ttq !== 'undefined') {
+        exitTracked = true;
+        ttq.track('ViewContent', { content_name: 'Exit Intent', content_type: 'exit' });
+      }
+    });
+
+  }); // end DOMContentLoaded
 
   // Sticky nav active state on scroll
   const sections = document.querySelectorAll('section[id]');
