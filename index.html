@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KRW87DVF');</script>
+  <!-- End Google Tag Manager -->
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="PeakForce Labs delivers independently verified, COA-certified research compounds to scientific institutions worldwide. Six-point testing. Full documentation. Uncompromising standards."/>
@@ -1137,6 +1144,10 @@
 
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KRW87DVF"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <!-- ANN BAR -->
 <div class="ann-bar">All compounds independently tested &nbsp;·&nbsp; Full COA documentation available &nbsp;·&nbsp; For Research Use Only</div>
@@ -1863,190 +1874,265 @@
 </footer>
 
 <script>
+  // ═══════════════════════════════════════════════════════════════════════════
+  //  PEAKFORCE LABS — COMPLETE TIKTOK TRACKING SYSTEM
+  //  Pixel ID  : D8OPH3RC77U794JNAHKG
+  //  API Token : 18a2691c457affd37b752cfea37d693a985a5846
+  //  Covers    : PageView, ViewContent, ClickButton, Lead, Contact,
+  //              AddToCart, InitiateCheckout, AddPaymentInfo,
+  //              PlaceAnOrder, Purchase, CompleteRegistration,
+  //              AddToWishlist, Search + Scroll/Time/Exit/Section
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ── UI FUNCTIONS ──────────────────────────────────────────────────────────
   function toggleFaq(el) {
     const item = el.parentElement;
     const isOpen = item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
-    // TikTok: FAQ open/close
-    if (typeof ttq !== 'undefined') {
-      const label = el.querySelector('span') ? el.querySelector('span').innerText.trim() : 'FAQ Item';
-      ttq.track('ViewContent', { content_name: 'FAQ: ' + label, content_type: 'faq' });
+    if (!isOpen) {
+      item.classList.add('open');
+      tiktokEvent('ViewContent', {
+        content_name: 'FAQ: ' + (el.querySelector('span') ? el.querySelector('span').innerText.trim() : 'FAQ Item'),
+        content_type: 'faq'
+      });
     }
   }
 
   function setActive(el) {
     document.querySelectorAll('.std-nav-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
-    // TikTok: Standards nav tab click
-    if (typeof ttq !== 'undefined') {
-      ttq.track('ViewContent', { content_name: 'Standards Tab: ' + el.innerText.trim(), content_type: 'tab' });
-    }
+    tiktokEvent('ViewContent', {
+      content_name: 'Standards Tab: ' + el.innerText.trim(),
+      content_type: 'tab'
+    });
   }
 
-  // ── TIKTOK: COMPREHENSIVE ACTION TRACKING ─────────────────────────────────
+  // ── CORE TRACKING FUNCTION (Browser + Server-Side API) ────────────────────
+  function tiktokEvent(eventName, params, userInfo) {
+    params = params || {};
+    userInfo = userInfo || {};
 
-  window.addEventListener('DOMContentLoaded', function () {
-
-    // ── SERVER-SIDE EVENTS API HELPER ─────────────────────────────────────────
-    // Sends events to TikTok Events API (server-side) for cross-site tracking
-    function sendTikTokServerEvent(eventName, eventParams) {
-      var payload = {
-        pixel_code: 'D8OPH3RC77U794JNAHKG',
-        event: eventName,
-        event_time: Math.floor(Date.now() / 1000),
-        url: window.location.href,
-        user_agent: navigator.userAgent,
-        properties: eventParams || {}
-      };
-      // Fire-and-forget to TikTok Events API via fetch
-      fetch('https://business-api.tiktok.com/open_api/v1.3/event/track/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Token': '18a2691c457affd37b752cfea37d693a985a5846'
-        },
-        body: JSON.stringify({
-          pixel_code: 'D8OPH3RC77U794JNAHKG',
-          event: eventName,
-          event_time: Math.floor(Date.now() / 1000),
-          context: {
-            page: { url: window.location.href },
-            user: { user_agent: navigator.userAgent }
-          },
-          properties: eventParams || {}
-        }),
-        keepalive: true
-      }).catch(function() {}); // silent fail — tracking should never break UX
+    // 1. Browser pixel
+    if (typeof ttq !== 'undefined') {
+      ttq.track(eventName, params);
     }
 
-    // 1. ALL LINK & BUTTON CLICKS (covers every CTA, nav link, footer link)
-    document.querySelectorAll('a, button').forEach(function (el) {
-      el.addEventListener('click', function (e) {
-        if (typeof ttq === 'undefined') return;
-        const label = el.innerText.trim() || el.getAttribute('aria-label') || el.getAttribute('href') || 'Unknown';
-        const href = el.getAttribute('href') || '';
-        const isExternal = href.startsWith('http') || href.startsWith('https');
-        const isOutboundToSite = href.includes('peakforcelabs.com');
+    // 2. Server-side Events API (fires even with ad blockers)
+    var payload = {
+      pixel_code: 'D8OPH3RC77U794JNAHKG',
+      event:      eventName,
+      event_time: Math.floor(Date.now() / 1000),
+      event_id:   eventName + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+      context: {
+        page: {
+          url:      window.location.href,
+          referrer: document.referrer
+        },
+        user: {
+          user_agent: navigator.userAgent,
+          ip:         '' // populated server-side by TikTok
+        }
+      },
+      properties: Object.assign({
+        content_type: params.content_type || 'page',
+        content_name: params.content_name || document.title,
+        currency:     params.currency     || 'USD',
+        value:        params.value        || 0
+      }, params)
+    };
 
-        // Contact / Submit buttons → InitiateCheckout + Lead + server-side
-        if (el.closest('.contact-form') || label.toLowerCase().includes('submit') || label.toLowerCase().includes('contact')) {
-          ttq.track('InitiateCheckout', { content_name: label, content_type: 'contact' });
-          ttq.track('Lead', { content_name: label, content_type: 'contact_form' });
-          sendTikTokServerEvent('Lead', { content_name: label, content_type: 'contact_form', url: window.location.href });
-        }
-        // COA / Library buttons → ViewContent + server-side
-        else if (label.toLowerCase().includes('coa') || label.toLowerCase().includes('library')) {
-          ttq.track('ViewContent', { content_name: label, content_type: 'coa' });
-          sendTikTokServerEvent('ViewContent', { content_name: label, content_type: 'coa', url: href });
-        }
-        // ALL outbound clicks to peakforcelabs.com → ClickButton + server-side
-        else if (isOutboundToSite) {
-          ttq.track('ClickButton', { content_name: label, content_type: 'outbound_to_site' });
-          ttq.track('ViewContent', { content_name: 'Clicked Through: ' + label, content_type: 'site_referral' });
-          sendTikTokServerEvent('ClickButton', { content_name: label, content_type: 'outbound_to_site', url: href });
-        }
-        // Other external links → ClickButton
-        else if (isExternal) {
-          ttq.track('ClickButton', { content_name: label, content_type: 'external_link' });
-          sendTikTokServerEvent('ClickButton', { content_name: label, content_type: 'external_link', url: href });
-        }
-        // Internal nav links (#anchor)
-        else if (href.startsWith('#')) {
-          ttq.track('ViewContent', { content_name: 'Nav: ' + label, content_type: 'navigation' });
-        }
-        // Generic
-        else {
-          ttq.track('ClickButton', { content_name: label, content_type: 'button' });
+    // Attach any user info (email/phone collected from form)
+    if (userInfo.email || userInfo.phone) {
+      payload.context.user.email = userInfo.email || '';
+      payload.context.user.phone = userInfo.phone || '';
+    }
+
+    fetch('https://business-api.tiktok.com/open_api/v1.3/event/track/', {
+      method:    'POST',
+      keepalive: true,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Token': '18a2691c457affd37b752cfea37d693a985a5846'
+      },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+  // ── ALL TRACKING INIT (runs after DOM ready) ───────────────────────────────
+  window.addEventListener('DOMContentLoaded', function () {
+
+    // ── 1. EVERY LINK & BUTTON CLICK ────────────────────────────────────────
+    document.querySelectorAll('a, button').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var label = el.innerText.trim() || el.getAttribute('aria-label') || el.getAttribute('title') || 'Unknown';
+        var href  = el.getAttribute('href') || '';
+        var lowerLabel = label.toLowerCase();
+        var isOutbound = href.includes('peakforcelabs.com');
+
+        if (el.closest('.contact-form') || lowerLabel.includes('submit') || lowerLabel.includes('contact us')) {
+          // Contact form submit → Lead + Contact + InitiateCheckout
+          var email = document.querySelector('.form-input[type="email"]') ? document.querySelector('.form-input[type="email"]').value : '';
+          tiktokEvent('Lead',             { content_name: label, content_type: 'contact_form' }, { email: email });
+          tiktokEvent('Contact',          { content_name: label, content_type: 'contact_form' }, { email: email });
+          tiktokEvent('InitiateCheckout', { content_name: label, content_type: 'contact_form' }, { email: email });
+
+        } else if (lowerLabel.includes('coa') || lowerLabel.includes('library')) {
+          // COA / Library → ViewContent + AddToWishlist (high intent)
+          tiktokEvent('ViewContent',    { content_name: label, content_type: 'coa', content_id: 'coa_library' });
+          tiktokEvent('AddToWishlist',  { content_name: label, content_type: 'coa', content_id: 'coa_library' });
+
+        } else if (lowerLabel.includes('order') || lowerLabel.includes('purchase') || lowerLabel.includes('buy')) {
+          // Order / Purchase intent
+          tiktokEvent('PlaceAnOrder', { content_name: label, content_type: 'product', currency: 'USD', value: 0 });
+          tiktokEvent('Purchase',     { content_name: label, content_type: 'product', currency: 'USD', value: 0 });
+
+        } else if (lowerLabel.includes('checkout') || lowerLabel.includes('payment')) {
+          // Checkout flow
+          tiktokEvent('InitiateCheckout', { content_name: label, content_type: 'checkout' });
+          tiktokEvent('AddPaymentInfo',   { content_name: label, content_type: 'checkout' });
+
+        } else if (lowerLabel.includes('register') || lowerLabel.includes('sign up') || lowerLabel.includes('create account')) {
+          // Registration
+          tiktokEvent('CompleteRegistration', { content_name: label, content_type: 'registration' });
+
+        } else if (lowerLabel.includes('add to cart') || lowerLabel.includes('add to bag')) {
+          // Add to cart
+          tiktokEvent('AddToCart', { content_name: label, content_type: 'product', currency: 'USD', value: 0 });
+
+        } else if (isOutbound) {
+          // Any other click to peakforcelabs.com
+          tiktokEvent('ClickButton', { content_name: label, content_type: 'outbound_to_site', url: href });
+          tiktokEvent('ViewContent', { content_name: 'Referral: ' + label, content_type: 'site_referral', url: href });
+
+        } else if (href.startsWith('#')) {
+          // Internal nav anchor
+          tiktokEvent('ViewContent', { content_name: 'Nav: ' + label, content_type: 'navigation' });
+
+        } else {
+          // Everything else
+          tiktokEvent('ClickButton', { content_name: label, content_type: 'button' });
         }
       });
     });
 
-    // 2. FORM FIELD INTERACTIONS (name, email, select, textarea)
+    // ── 2. FORM FIELD FOCUS (first touch = interest signal) ─────────────────
     document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(function (field) {
       var tracked = false;
       field.addEventListener('focus', function () {
-        if (!tracked && typeof ttq !== 'undefined') {
-          tracked = true;
-          const label = field.closest('.form-field') && field.closest('.form-field').querySelector('.form-label')
-            ? field.closest('.form-field').querySelector('.form-label').innerText.trim()
-            : field.getAttribute('placeholder') || 'Form Field';
-          ttq.track('ViewContent', { content_name: 'Form Focus: ' + label, content_type: 'form_interaction' });
+        if (tracked) return;
+        tracked = true;
+        var label = field.closest('.form-field') && field.closest('.form-field').querySelector('.form-label')
+          ? field.closest('.form-field').querySelector('.form-label').innerText.trim()
+          : field.getAttribute('placeholder') || 'Form Field';
+        tiktokEvent('ViewContent', { content_name: 'Form Focus: ' + label, content_type: 'form_interaction' });
+      });
+    });
+
+    // ── 3. FORM COMPLETION (all fields filled = strong lead signal) ──────────
+    var formFields = document.querySelectorAll('.form-input, .form-textarea');
+    formFields.forEach(function(field) {
+      field.addEventListener('blur', function() {
+        var allFilled = true;
+        formFields.forEach(function(f) { if (!f.value.trim()) allFilled = false; });
+        if (allFilled) {
+          var email = document.querySelector('.form-input[type="email"]') ? document.querySelector('.form-input[type="email"]').value : '';
+          tiktokEvent('Lead', { content_name: 'Form Completed', content_type: 'form_complete' }, { email: email });
         }
       });
     });
 
-    // 3. SCROLL DEPTH TRACKING (25%, 50%, 75%, 90%)
-    var scrollDepths = [25, 50, 75, 90];
-    var reached = {};
+    // ── 4. SCROLL DEPTH (25 / 50 / 75 / 90 / 100%) ──────────────────────────
+    var scrollDepths = [25, 50, 75, 90, 100];
+    var scrollReached = {};
     window.addEventListener('scroll', function () {
-      var scrollPct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
-      scrollDepths.forEach(function (depth) {
-        if (!reached[depth] && scrollPct >= depth) {
-          reached[depth] = true;
-          if (typeof ttq !== 'undefined') {
-            ttq.track('ViewContent', { content_name: 'Scroll Depth: ' + depth + '%', content_type: 'scroll' });
-          }
+      var pct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+      scrollDepths.forEach(function (d) {
+        if (!scrollReached[d] && pct >= d) {
+          scrollReached[d] = true;
+          tiktokEvent('ViewContent', { content_name: 'Scroll ' + d + '%', content_type: 'scroll_depth' });
         }
       });
     });
 
-    // 4. TIME ON PAGE (30s, 60s, 120s, 180s)
-    [30, 60, 120, 180].forEach(function (seconds) {
+    // ── 5. TIME ON PAGE (30s / 60s / 120s / 180s / 300s) ────────────────────
+    [30, 60, 120, 180, 300].forEach(function (s) {
       setTimeout(function () {
-        if (typeof ttq !== 'undefined') {
-          ttq.track('ViewContent', { content_name: 'Time on Page: ' + seconds + 's', content_type: 'engagement' });
-        }
-      }, seconds * 1000);
+        tiktokEvent('ViewContent', { content_name: 'Time on Page: ' + s + 's', content_type: 'time_engagement' });
+      }, s * 1000);
     });
 
-    // 5. SECTION VISIBILITY (fires when each section enters viewport)
+    // ── 6. SECTION VISIBILITY (fires once per section) ───────────────────────
     if ('IntersectionObserver' in window) {
-      var sectionObserver = new IntersectionObserver(function (entries) {
+      var obs = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting && typeof ttq !== 'undefined') {
-            var sectionId = entry.target.id || entry.target.className.split(' ')[0];
-            ttq.track('ViewContent', { content_name: 'Section Viewed: ' + sectionId, content_type: 'section' });
-            sectionObserver.unobserve(entry.target); // fire once per section
+          if (entry.isIntersecting) {
+            var id = entry.target.id || entry.target.className.split(' ')[0];
+            tiktokEvent('ViewContent', { content_name: 'Section: ' + id, content_type: 'section_view' });
+            obs.unobserve(entry.target);
           }
         });
       }, { threshold: 0.3 });
       document.querySelectorAll('section[id], .pipeline-section, .trust-bar').forEach(function (el) {
-        sectionObserver.observe(el);
+        obs.observe(el);
       });
     }
 
-    // 6. PIPELINE NODE HOVER (engagement signal)
+    // ── 7. PIPELINE NODE HOVER ───────────────────────────────────────────────
     document.querySelectorAll('.p-node').forEach(function (node) {
       var tracked = false;
       node.addEventListener('mouseenter', function () {
-        if (!tracked && typeof ttq !== 'undefined') {
-          tracked = true;
-          var label = node.querySelector('.p-node-label') ? node.querySelector('.p-node-label').innerText.trim() : 'Pipeline Node';
-          ttq.track('ViewContent', { content_name: 'Pipeline Hover: ' + label, content_type: 'pipeline' });
+        if (tracked) return;
+        tracked = true;
+        var label = node.querySelector('.p-node-label') ? node.querySelector('.p-node-label').innerText.trim() : 'Pipeline Step';
+        tiktokEvent('ViewContent', { content_name: 'Pipeline: ' + label, content_type: 'pipeline_hover' });
+      });
+    });
+
+    // ── 8. SEARCH (if user types in any search/input field) ──────────────────
+    document.querySelectorAll('input[type="search"], input[placeholder*="search" i]').forEach(function(input) {
+      input.addEventListener('change', function() {
+        if (input.value.trim()) {
+          tiktokEvent('Search', { content_name: 'Search: ' + input.value.trim(), search_string: input.value.trim(), content_type: 'search' });
         }
       });
     });
 
-    // 7. COPY/HIGHLIGHT TEXT (research intent signal)
+    // ── 9. TEXT COPY ─────────────────────────────────────────────────────────
     document.addEventListener('copy', function () {
-      if (typeof ttq !== 'undefined') {
-        ttq.track('ViewContent', { content_name: 'Text Copied', content_type: 'copy' });
+      tiktokEvent('ViewContent', { content_name: 'Text Copied', content_type: 'copy_action' });
+    });
+
+    // ── 10. EXIT INTENT ──────────────────────────────────────────────────────
+    var exitTracked = false;
+    document.addEventListener('mouseleave', function (e) {
+      if (!exitTracked && e.clientY <= 0) {
+        exitTracked = true;
+        tiktokEvent('ViewContent', { content_name: 'Exit Intent', content_type: 'exit_intent' });
       }
     });
 
-    // 8. EXIT INTENT (mouse leaves top of page)
-    var exitTracked = false;
-    document.addEventListener('mouseleave', function (e) {
-      if (!exitTracked && e.clientY <= 0 && typeof ttq !== 'undefined') {
-        exitTracked = true;
-        ttq.track('ViewContent', { content_name: 'Exit Intent', content_type: 'exit' });
+    // ── 11. PAGE VISIBILITY (tab switch = re-engagement) ─────────────────────
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') {
+        tiktokEvent('ViewContent', { content_name: 'Tab Re-engaged', content_type: 'visibility' });
       }
+    });
+
+    // ── 12. ADD TO CART / WISHLIST (future-proof: detects cart buttons) ──────
+    document.querySelectorAll('[class*="cart"], [class*="wishlist"], [id*="cart"], [id*="wishlist"]').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var label = el.innerText.trim() || 'Cart/Wishlist Button';
+        if (label.toLowerCase().includes('wish')) {
+          tiktokEvent('AddToWishlist', { content_name: label, content_type: 'product', currency: 'USD', value: 0 });
+        } else {
+          tiktokEvent('AddToCart', { content_name: label, content_type: 'product', currency: 'USD', value: 0 });
+        }
+      });
     });
 
   }); // end DOMContentLoaded
 
-  // Sticky nav active state on scroll
+  // ── STICKY NAV ACTIVE STATE ───────────────────────────────────────────────
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
   window.addEventListener('scroll', () => {
@@ -2058,6 +2144,7 @@
       a.style.color = a.getAttribute('href') === '#' + current ? 'var(--white)' : '';
     });
   });
+
 </script>
 </body>
 </html>
